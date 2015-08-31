@@ -1,0 +1,10 @@
+{
+  "name": "folddigest",
+  "description": "Create outline based on folds",
+  "version": "1.0.1",
+  "author": "Yu Huang",
+  "repository": {"type": "git", "url": "git://github.com/paulhybryant/folddigest"},
+  "dependencies": {
+    "maktaba": {"type": "git", "url": "git://github.com/google/vim-maktaba"}
+  }
+}

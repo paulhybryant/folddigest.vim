@@ -2,11 +2,12 @@
 "
 " folddigest.vim - Show fold digest tree view.
 "
-" Maintainer:	MURAOKA Taro <koron@tka.att.ne.jp>
-" Last Change:	14-Aug-2003.
+" Original Author:  MURAOKA Taro <koron@tka.att.ne.jp>
+" Maintainer:       Yu Huang <paulhybryant@gmail.com>
+" Last Change:  31-Aug-2015.
 
 " Usage:
-"	:call FoldDigest()
+"       :FoldDigest
 "
 "   Transform all folds in the current buffer into digest tree form, and
 "   show it in another buffer.  The buffer is called FOLDDIGEST.  It shows
@@ -22,60 +23,26 @@
 " Options:
 "
 "   'folddigest_options'
-"		string (default "")
-"	Set string flag which you need.  If you want to use more than two,
-"	join by comma.
+"               string (default "")
+"       Set string flag which you need.  If you want to use more than two,
+"       join by comma.
 "
-"	  flexnumwidth	Narrow line number width as possible.
-"	  nofoldclose	don't close folds after ":call FoldDigest()".
-"	  vertical	Use :vsplit for FOLDDIGEST. (default :split)
+"         flexnumwidth  Narrow line number width as possible.
+"         nofoldclose   don't close folds after ":call FoldDigest()".
+"         vertical      Use :vsplit for FOLDDIGEST. (default :split)
 "
 "   'folddigest_size'
-"		number (default 0)
-"	FOLDDIGEST window size.  When 'folddigest_options' has "vertical"
-"	flag, this value is interpretted as window height, and doesn't then
-"	as window width.  If zero was specified height/width become half of
-"	current window.
+"               number (default 0)
+"       FOLDDIGEST window size.  When 'folddigest_options' has "vertical"
+"       flag, this value is interpretted as window height, and doesn't then
+"       as window width.  If zero was specified height/width become half of
+"       current window.
 "
 "   ex:
-"	:let folddigest_options = "vertical,flexnumwidth"
-"	:let folddigest_size = 30
+"       :let folddigest_options = "vertical,flexnumwidth"
+"       :let folddigest_size = 30
 
-" JAPANESE DESCRIPTION:
-"
-" 概要:
-"   foldのダイジェストを表示します。
-"
-" 使い方:
-"	:call FoldDigest()
-"
-"   カレントバッファ内にあるfoldのダイジェストを、別バッファへ作成します。こ
-"   のバッファをFOLDDIGESTと呼びます。FOLDDIGESTには全てのfoldの開始位置が表
-"   示されるだけでなく、foldの階層関係に基づいたツリーが表示されます。
-"
-"   FOLDDIGEST内では普通にカーソルを動かすことができ、<CR>を押すとカーソルの
-"   下にあるfoldへ飛ぶことができます。カーソルを別ウィンドウからFOLDDIGESTへ
-"   移すと、ターゲットバッファが有効な場合には自動的に同期が取られます。また
-"   FOLDDIGESTでrを押すと強制的に同期を取ることができます。
-"
-" オプション:
-"
-"   'folddigest_options'
-"		string (省略値  "")
-"	以下の文字列のうち必要なものを書く。複数を指定する場合はカンマで区切
-"	る。
-"
-"	  flexnumwidth	行番号の桁数を必要最小限にする
-"	  nofoldclose	:call FoldDigest()の後に、foldを閉じない
-"	  vertical	バッファを縦分割する
-"
-"   'folddigest_size'
-"		number (省略値 0)
-"	FOLDDIGESTバッファを開く再の大きさを設定する。'folddigest_options'に
-"	"vertical"が含まれている場合は高さとして、含まれていない場合は幅とし
-"	て解釈される。0を指定した時にはカレントウィンドウの半分になる。
-"
-"   例: let folddigest_options = "vertical,flexnumwidth"
+let s:plugin = maktaba#plugin#Get('folddigest')
 
 function! s:HasFlag(flags, flag)
   return a:flags =~ '\%(^\|,\)'.a:flag.'\%(=\([^,]*\)\)\?\%(,\|$\)'
@@ -126,16 +93,16 @@ function! s:GoMasterWindow(...)
     let bufname = getbufvar(bufnr('%'), 'bufname')
     if s:use_vertical
       if 0 < s:digest_size && s:digest_size < winwidth(0)
-	let size = winwidth(0) - s:digest_size
+        let size = winwidth(0) - s:digest_size
       else
-	let size = ''
+        let size = ''
       endif
       silent execute "rightbelow ".size." vsplit ".bufname
     else
       if 0 < s:digest_size && s:digest_size < winheight(0)
-	let size = winheight(0) - s:digest_size
+        let size = winheight(0) - s:digest_size
       else
-	let size = ''
+        let size = ''
       endif
       silent execute "rightbelow ".size." split ".bufname
     endif
@@ -176,7 +143,7 @@ endfunction
 
 function! s:Refresh()
   if s:GoMasterWindow('nosplit') > 0
-    call FoldDigest()
+    call folddigest#FoldDigest()
   endif
 endfunction
 
@@ -276,10 +243,10 @@ function! s:GenerateFoldDigest()
     endif
     if foldlevel(currline) > 0
       if firstfoldline == 0
-	let firstfoldline = currline
+        let firstfoldline = currline
       endif
       if prevline <= cursorline && cursorline < currline
-	let cursorfoldnum = foldnum
+        let cursorfoldnum = foldnum
       endif
       let foldnum = foldnum + 1
       call s:AddFoldDigest(currline)
@@ -292,7 +259,7 @@ function! s:GenerateFoldDigest()
   return cursorfoldnum + 1
 endfunction
 
-function! FoldDigest()
+function! folddigest#FoldDigest()
   if bufname('%') =~# '\m^==FOLDDIGEST=='
     echohl Error
     echo "Can't make digest for FOLDDIGEST buffer"
