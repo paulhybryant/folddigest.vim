@@ -137,6 +137,7 @@ function! s:MakeDigestBuffer()
     else
       silent execute size." split ++enc= ".escape(name, ' ')
     endif
+    let b:FoldDigest = ''
   else
     execute winnr.'wincmd w'
   endif
