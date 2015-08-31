@@ -19,45 +19,11 @@
 "   when depended buffer is availabeled, it will be synchronized
 "   automatically.  If you want to force synchronize, type "r" in a
 "   FOLDDIGEST buffer.
-"
-" Options:
-"
-"   'folddigest_options'
-"               string (default "")
-"       Set string flag which you need.  If you want to use more than two,
-"       join by comma.
-"
-"         flexnumwidth  Narrow line number width as possible.
-"         nofoldclose   don't close folds after ":call FoldDigest()".
-"         vertical      Use :vsplit for FOLDDIGEST. (default :split)
-"
-"   'folddigest_size'
-"               number (default 0)
-"       FOLDDIGEST window size.  When 'folddigest_options' has "vertical"
-"       flag, this value is interpretted as window height, and doesn't then
-"       as window width.  If zero was specified height/width become half of
-"       current window.
-"
-"   ex:
-"       :let folddigest_options = "vertical,flexnumwidth"
-"       :let folddigest_size = 30
 
 let s:plugin = maktaba#plugin#Get('folddigest')
 
 function! s:HasFlag(flags, flag)
   return a:flags =~ '\%(^\|,\)'.a:flag.'\%(=\([^,]*\)\)\?\%(,\|$\)'
-endfunction
-
-function! s:CheckOptions()
-  let options = !exists('g:folddigest_options') ? '' : g:folddigest_options
-  let s:use_flexnumwidth = s:HasFlag(options, 'flexnumwidth')
-  let s:use_nofoldclose = s:HasFlag(options, 'nofoldclose')
-  let s:use_vertical = s:HasFlag(options, 'vertical')
-  if exists('g:folddigest_size') && (g:folddigest_size + 0) > 0
-    let s:digest_size = g:folddigest_size + 0
-  else
-    let s:digest_size = 0
-  endif
 endfunction
 
 function! s:IndicateRawline(linenum)
@@ -91,7 +57,7 @@ function! s:GoMasterWindow(...)
     return winnr
   elseif !s:HasFlag(flags, 'nosplit')
     let bufname = getbufvar(bufnr('%'), 'bufname')
-    if s:use_vertical
+    if s:plugin.Flag('vertical')
       if 0 < s:digest_size && s:digest_size < winwidth(0)
         let size = winwidth(0) - s:digest_size
       else
@@ -166,7 +132,7 @@ function! s:MakeDigestBuffer()
   let s:do_auto_refresh = 0
   if winnr < 1
     let size = s:digest_size > 0 ? s:digest_size : ""
-    if s:use_vertical
+    if s:plugin.Flag('vertical')
       silent execute size." vsplit ++enc= ".escape(name, ' ')
     else
       silent execute size." split ++enc= ".escape(name, ' ')
@@ -219,7 +185,7 @@ endfunction
 function! s:GenerateFoldDigest()
   " Configure script options
   let s:numwidth = strlen(line('$').'')
-  if !s:use_flexnumwidth || s:numwidth < 0 || s:numwidth > 7
+  if !s:plugin.Flag('flexnumwidth') || s:numwidth < 0 || s:numwidth > 7
     let s:numwidth = 7
   endif
   " Open all folds and fetch lines at start of the fold.
@@ -266,7 +232,7 @@ function! folddigest#FoldDigest()
     echohl None
     return
   endif
-  call s:CheckOptions()
+  let s:digest_size = s:plugin.Flag('winsize')
   " Save cursor position
   let save_line = line('.')
   let save_winline = winline()
@@ -290,7 +256,7 @@ function! folddigest#FoldDigest()
   let &t_vb = save_t_vb
   " Revert cursor line
   execute save_line
-  if !s:use_nofoldclose
+  if !s:plugin.Flag('closefold')
     silent! normal! zMzO
   endif
   " Keep same cursor position as possible

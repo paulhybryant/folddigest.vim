@@ -1,0 +1,43 @@
+*folddigest.txt*	Create outline based on folds
+Yu Huang                                                          *folddigest*
+
+==============================================================================
+CONTENTS                                                 *folddigest-contents*
+  1. Configuration.........................................|folddigest-config|
+  2. Commands............................................|folddigest-commands|
+
+==============================================================================
+CONFIGURATION                                              *folddigest-config*
+
+This plugin uses maktaba flags for configuration. Install Glaive
+(https://github.com/google/glaive) and use the |:Glaive| command to configure
+them.
+
+                                                        *folddigest:closefold*
+Whether close folds when opening fold digest window.
+Default: 0 `
+
+                                                     *folddigest:flexnumwidth*
+Narrow line number width as possible.
+Default: 0 `
+
+                                                         *folddigest:vertical*
+Whether use vertical split for the digest window.
+Default: 0 `
+
+                                                          *folddigest:winsize*
+Size of the digest window (width when split vertically, height otherwise).
+Default: 0 `
+
+                                                  *folddigest:plugin[command]*
+Configures whether plugin/command.vim should be loaded.
+Default: 1 `
+
+==============================================================================
+COMMANDS                                                 *folddigest-commands*
+
+:FoldDigest                                                      *:FoldDigest*
+  Open the fold digest window
+
+
+vim:tw=78:ts=8:ft=help:norl:
