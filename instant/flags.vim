@@ -18,3 +18,7 @@ call s:plugin.Flag('vertical', 0)
 ""
 " Size of the digest window (width when split vertically, height otherwise).
 call s:plugin.Flag('winsize', 0)
+
+""
+" Positino of the fold digest window.
+call s:plugin.Flag('winpos', 'rightbelow')

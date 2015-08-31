@@ -63,14 +63,14 @@ function! s:GoMasterWindow(...)
       else
         let size = ''
       endif
-      silent execute "rightbelow ".size." vsplit ".bufname
+      silent execute s:plugin.Flag('winpos') . ' ' . size . ' vsplit ' . bufname
     else
       if 0 < s:digest_size && s:digest_size < winheight(0)
         let size = winheight(0) - s:digest_size
       else
         let size = ''
       endif
-      silent execute "rightbelow ".size." split ".bufname
+      silent execute s:plugin.Flag('winpos') . ' ' . size . ' split ' . bufname
     endif
     call s:MarkMasterWindow()
     return winnr()
@@ -133,9 +133,9 @@ function! s:MakeDigestBuffer()
   if winnr < 1
     let size = s:digest_size > 0 ? s:digest_size : ""
     if s:plugin.Flag('vertical')
-      silent execute size." vsplit ++enc= ".escape(name, ' ')
+      silent execute s:plugin.Flag('winpos') . ' ' . size . ' vsplit ++enc= ' . escape(name, ' ')
     else
-      silent execute size." split ++enc= ".escape(name, ' ')
+      silent execute s:plugin.Flag('winpos') . ' ' . size . ' split ++enc= ' . escape(name, ' ')
     endif
     let b:FoldDigest = ''
   else
