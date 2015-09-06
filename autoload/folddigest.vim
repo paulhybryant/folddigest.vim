@@ -78,7 +78,7 @@ function! s:GoMasterWindow(...)
   return 0
 endfunction
 
-function! s:Jump()
+function! folddigest#Jump() abort
   let mx = '\m^\%(\s*\(\d\+\) \)\=\%(\(\%(| \)*\)+--\(.*\)$\|\^$\|\$$\)'
   let linenr = line('.')
   let lastline = linenr == line('$') ? 1 : 0
@@ -107,19 +107,9 @@ function! s:Jump()
   endif
 endfunction
 
-function! s:Refresh()
+function! folddigest#Refresh()
   if s:GoMasterWindow('nosplit') > 0
     call folddigest#FoldDigest()
-  endif
-endfunction
-
-let s:do_auto_refresh = 1
-
-function! s:AutoRefresh()
-  if s:do_auto_refresh
-    let s:do_auto_refresh = 0
-    call s:Refresh()
-    let s:do_auto_refresh = 1
   endif
 endfunction
 
@@ -129,7 +119,7 @@ function! s:MakeDigestBuffer()
   call s:MarkMasterWindow()
   let name = "==FOLDDIGEST== ".expand('%:t')." [".bufnum."]"
   let winnr = bufwinnr(name)
-  let s:do_auto_refresh = 0
+  call s:plugin.Flag('autorefresh', 0)
   if winnr < 1
     let size = s:digest_size > 0 ? s:digest_size : ""
     if s:plugin.Flag('vertical')
@@ -137,12 +127,11 @@ function! s:MakeDigestBuffer()
     else
       silent execute s:plugin.Flag('winpos') . ' ' . size . ' split ++enc= ' . escape(name, ' ')
     endif
-    let b:FoldDigest = ''
   else
     execute winnr.'wincmd w'
   endif
-  let s:do_auto_refresh = 1
-  setlocal buftype=nofile bufhidden=hide noswapfile nowrap ft=
+  call s:plugin.Flag('autorefresh', 1)
+  setlocal buftype=nofile bufhidden=hide noswapfile nowrap filetype=folddigest
   setlocal foldcolumn=0 nonumber
   match none
   call setbufvar(bufnr('%'), 'bufnr', bufnum)
@@ -159,8 +148,6 @@ function! s:MakeDigestBuffer()
   hi def link folddigestTreemark Identifier
   hi def link folddigestFirstline Identifier
   hi def link folddigestLastline Identifier
-  nnoremap <silent><buffer> <CR> :call <SID>Jump()<CR>
-  nnoremap <silent><buffer> r :call <SID>Refresh()<CR>
 endfunction
 
 function! s:Foldtext(linenum, text)
@@ -227,7 +214,7 @@ function! s:GenerateFoldDigest()
 endfunction
 
 function! folddigest#FoldDigest()
-  if bufname('%') =~# '\m^==FOLDDIGEST=='
+  if &filetype =~# 'folddigest'
     echohl Error
     echo "Can't make digest for FOLDDIGEST buffer"
     echohl None
@@ -280,8 +267,3 @@ function! folddigest#FoldDigest()
   " Revert undolevels
   let &undolevels = save_undolevels
 endfunction
-
-augroup FoldDigest
-  autocmd!
-  autocmd BufEnter ==FOLDDIGEST==* call <SID>AutoRefresh()
-augroup END

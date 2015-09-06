@@ -22,3 +22,7 @@ call s:plugin.Flag('winsize', 0)
 ""
 " Positino of the fold digest window.
 call s:plugin.Flag('winpos', 'rightbelow')
+
+""
+" Automatically refresh fold digest window
+call s:plugin.Flag('autorefresh', 1)
