@@ -5,7 +5,3 @@ endif
 
 " Opens the fold digest window
 nnoremap <leader>fd :FoldDigest<CR>
-
-nnoremap <silent><buffer> <CR> :call folddigest#Jump()<CR>
-
-nnoremap <silent><buffer> r :call folddigest#Refresh()<CR>

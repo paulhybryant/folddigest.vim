@@ -4,7 +4,7 @@
 "
 " Original Author:  MURAOKA Taro <koron@tka.att.ne.jp>
 " Maintainer:       Yu Huang <paulhybryant@gmail.com>
-" Last Change:  31-Aug-2015.
+" Last Change:      2015/09/06
 
 " Usage:
 "       :FoldDigest
@@ -21,10 +21,6 @@
 "   FOLDDIGEST buffer.
 
 let s:plugin = maktaba#plugin#Get('folddigest')
-
-function! s:HasFlag(flags, flag)
-  return a:flags =~ '\%(^\|,\)'.a:flag.'\%(=\([^,]*\)\)\?\%(,\|$\)'
-endfunction
 
 function! s:IndicateRawline(linenum)
   execute 'match Search /\m^\%'.a:linenum.'l\(\s*\d\+ \)\=\%(\%(| \)*+--\|\^\|\$\)/'
@@ -55,7 +51,7 @@ function! s:GoMasterWindow(...)
   if winnr > 0
     execute winnr.'wincmd w'
     return winnr
-  elseif !s:HasFlag(flags, 'nosplit')
+  elseif flags !~ '\%(^\|,\)nosplit\%(=\([^,]*\)\)\?\%(,\|$\)'
     let bufname = getbufvar(bufnr('%'), 'bufname')
     if s:plugin.Flag('vertical')
       if 0 < s:digest_size && s:digest_size < winwidth(0)
@@ -78,7 +74,7 @@ function! s:GoMasterWindow(...)
   return 0
 endfunction
 
-function! folddigest#Jump() abort
+function! s:Jump() abort
   let mx = '\m^\%(\s*\(\d\+\) \)\=\%(\(\%(| \)*\)+--\(.*\)$\|\^$\|\$$\)'
   let linenr = line('.')
   let lastline = linenr == line('$') ? 1 : 0
@@ -148,6 +144,8 @@ function! s:MakeDigestBuffer()
   hi def link folddigestTreemark Identifier
   hi def link folddigestFirstline Identifier
   hi def link folddigestLastline Identifier
+  nnoremap <silent><buffer> <CR> :call s:Jump()<CR>
+  nnoremap <silent><buffer> r :call folddigest#Refresh()<CR>
 endfunction
 
 function! s:Foldtext(linenum, text)
