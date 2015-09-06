@@ -6,5 +6,5 @@ endif
 
 ""
 " @usage
-" Open the fold digest window
+" Opens the fold digest window
 command -nargs=0 FoldDigest call folddigest#FoldDigest()

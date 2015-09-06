@@ -3,4 +3,5 @@ if !s:enter
   finish
 endif
 
+" Opens the fold digest window
 nnoremap <leader>fd :FoldDigest<CR>
