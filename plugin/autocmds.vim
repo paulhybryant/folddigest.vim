@@ -7,6 +7,7 @@ if !s:enter
   finish
 endif
 
+
 function! s:AutoRefresh()
   if s:plugin.Flag('autorefresh')
     call s:plugin.Flag('autorefresh', 0)
@@ -14,6 +15,7 @@ function! s:AutoRefresh()
     call s:plugin.Flag('autorefresh', 1)
   endif
 endfunction
+
 
 augroup FoldDigest
   autocmd!
